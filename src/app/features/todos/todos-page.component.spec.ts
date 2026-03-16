@@ -3,8 +3,9 @@ import { By } from '@angular/platform-browser';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 
 import { TodoItemComponent } from './components/todo-item/todo-item.component';
+import { TODOS_STORAGE_KEY } from './services/todos-storage.service';
 import { TodoItem } from './todo.model';
-import { TODOS_STORAGE_KEY, TodosPageComponent } from './todos-page.component';
+import { TodosPageComponent } from './todos-page.component';
 
 interface StoredTodoItem {
   id: string;

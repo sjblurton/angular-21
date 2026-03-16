@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -17,16 +17,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { startWith } from 'rxjs';
 
 import { TodoItemComponent } from './components/todo-item/todo-item.component';
+import { TodosStorageService } from './services/todos-storage.service';
 import { TodoFilter, TodoItem } from './todo.model';
-
-export const TODOS_STORAGE_KEY = 'todo-studio.todos';
-
-interface StoredTodoItem {
-  id: string;
-  title: string;
-  completed: boolean;
-  createdAt: string;
-}
 
 const FILTER_LABELS: Record<TodoFilter, string> = {
   all: 'All items',
@@ -55,6 +47,8 @@ function trimmedRequiredValidator(control: AbstractControl<string>): ValidationE
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosPageComponent {
+  private readonly storage = inject(TodosStorageService);
+
   readonly addTodoControl = new FormControl('', {
     nonNullable: true,
     validators: [trimmedRequiredValidator, Validators.maxLength(120)],
@@ -69,7 +63,7 @@ export class TodosPageComponent {
   });
 
   readonly selectedFilter = signal<TodoFilter>('all');
-  readonly todos = signal<TodoItem[]>(this.loadTodos());
+  readonly todos = signal<TodoItem[]>(this.storage.load());
   readonly totalCount = computed(() => this.todos().length);
   readonly activeCount = computed(() => this.todos().filter((todo) => !todo.completed).length);
   readonly completedCount = computed(() => this.todos().filter((todo) => todo.completed).length);
@@ -113,69 +107,6 @@ export class TodosPageComponent {
     return `${itemCount} ${itemLabel} in ${viewLabel}`;
   });
 
-  private fromStoredTodo(value: unknown): TodoItem | null {
-    if (typeof value !== 'object' || value === null) {
-      return null;
-    }
-
-    const storedTodo = value as Partial<StoredTodoItem>;
-
-    if (
-      typeof storedTodo.id !== 'string' ||
-      typeof storedTodo.title !== 'string' ||
-      typeof storedTodo.completed !== 'boolean' ||
-      typeof storedTodo.createdAt !== 'string'
-    ) {
-      return null;
-    }
-
-    const createdAt = new Date(storedTodo.createdAt);
-
-    if (Number.isNaN(createdAt.getTime())) {
-      return null;
-    }
-
-    return {
-      id: storedTodo.id,
-      title: storedTodo.title,
-      completed: storedTodo.completed,
-      createdAt,
-    };
-  }
-
-  private loadTodos(): TodoItem[] {
-    const storedTodos = localStorage.getItem(TODOS_STORAGE_KEY);
-
-    if (!storedTodos) {
-      return [];
-    }
-
-    try {
-      const parsedTodos = JSON.parse(storedTodos) as unknown;
-
-      if (!Array.isArray(parsedTodos)) {
-        return [];
-      }
-
-      return parsedTodos
-        .map((todo) => this.fromStoredTodo(todo))
-        .filter((todo): todo is TodoItem => todo !== null);
-    } catch {
-      return [];
-    }
-  }
-
-  private persistTodos(todos: TodoItem[]): void {
-    const serializableTodos: StoredTodoItem[] = todos.map((todo) => ({
-      id: todo.id,
-      title: todo.title,
-      completed: todo.completed,
-      createdAt: todo.createdAt.toISOString(),
-    }));
-
-    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(serializableTodos));
-  }
-
   addTodo(): void {
     if (this.addTodoForm.invalid) {
       this.addTodoControl.markAsTouched();
@@ -192,7 +123,7 @@ export class TodosPageComponent {
 
     const updatedTodos = [nextTodo, ...this.todos()];
     this.todos.set(updatedTodos);
-    this.persistTodos(updatedTodos);
+    this.storage.persist(updatedTodos);
     this.addTodoForm.reset({ title: '' });
     this.addTodoControl.markAsPristine();
     this.addTodoControl.markAsUntouched();
@@ -204,14 +135,14 @@ export class TodosPageComponent {
     );
 
     this.todos.set(updatedTodos);
-    this.persistTodos(updatedTodos);
+    this.storage.persist(updatedTodos);
   }
 
   deleteTodo(todoId: string): void {
     const updatedTodos = this.todos().filter((todo) => todo.id !== todoId);
 
     this.todos.set(updatedTodos);
-    this.persistTodos(updatedTodos);
+    this.storage.persist(updatedTodos);
   }
 
   setFilter(filter: string | null): void {
