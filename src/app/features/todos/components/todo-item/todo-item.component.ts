@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { formatDistanceToNow } from 'date-fns';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
+import { DistanceToNowPipe } from '../../pipes/distance-to-now.pipe';
 import { TodoItem } from '../../todo.model';
 
 @Component({
   selector: 'app-todo-item',
-  imports: [MatButtonModule, MatCheckboxModule, MatIconModule],
+  imports: [MatButtonModule, MatCheckboxModule, MatIconModule, DistanceToNowPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'todo-item-host',
@@ -30,7 +30,7 @@ import { TodoItem } from '../../todo.model';
         <p class="todo-title">{{ todo().title }}</p>
         <p class="todo-meta">
           {{ todo().completed ? 'Completed' : 'In progress' }} · Added
-          {{ createdAtLabel() }}
+          {{ todo().createdAt | distanceToNow }}
         </p>
       </div>
 
@@ -152,10 +152,6 @@ export class TodoItemComponent {
   readonly todo = input.required<TodoItem>();
   readonly toggleRequested = output<string>();
   readonly deleteRequested = output<string>();
-
-  readonly createdAtLabel = computed(() =>
-    formatDistanceToNow(this.todo().createdAt, { addSuffix: true }),
-  );
 
   requestToggle(): void {
     this.toggleRequested.emit(this.todo().id);
