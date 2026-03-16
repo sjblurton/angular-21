@@ -6,36 +6,50 @@ import { TodoItemComponent } from './todo-item.component';
 import { TodoItem } from './todo.model';
 import { TODOS_STORAGE_KEY, TodosPageComponent } from './todos-page.component';
 
+interface StoredTodoItem {
+  id: string;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
+
 describe('TodosPageComponent', () => {
   const storedTodos: TodoItem[] = [
     {
       id: 'todo-1',
       title: 'Sketch the onboarding headline hierarchy',
       completed: false,
-      createdLabel: 'Now',
+      createdAt: new Date('2026-03-16T08:00:00.000Z'),
     },
     {
       id: 'todo-2',
       title: 'Prototype the moodboard footer interactions',
       completed: false,
-      createdLabel: 'Now',
+      createdAt: new Date('2026-03-15T09:30:00.000Z'),
     },
     {
       id: 'todo-3',
       title: 'Share the launch checklist with the product team',
       completed: true,
-      createdLabel: 'Yesterday',
+      createdAt: new Date('2026-03-14T11:15:00.000Z'),
     },
     {
       id: 'todo-4',
       title: 'Tighten the accessibility notes for form controls',
       completed: false,
-      createdLabel: 'Yesterday',
+      createdAt: new Date('2026-03-13T14:45:00.000Z'),
     },
   ];
 
   const persistTodos = (todos: TodoItem[]): void => {
-    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+    const serializedTodos: StoredTodoItem[] = todos.map((todo) => ({
+      id: todo.id,
+      title: todo.title,
+      completed: todo.completed,
+      createdAt: todo.createdAt.toISOString(),
+    }));
+
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(serializedTodos));
   };
 
   beforeEach(async () => {
@@ -79,6 +93,39 @@ describe('TodosPageComponent', () => {
     expect(component.totalCount()).toBe(0);
   });
 
+  it('should ignore invalid todo entries when hydrating from local storage', () => {
+    localStorage.setItem(
+      TODOS_STORAGE_KEY,
+      JSON.stringify([
+        null,
+        {
+          id: 'todo-x',
+          title: 'Broken shape',
+          completed: 'nope',
+          createdAt: '2026-03-12T09:00:00.000Z',
+        },
+        {
+          id: 'todo-y',
+          title: 'Bad date',
+          completed: false,
+          createdAt: 'not-a-date',
+        },
+        {
+          id: 'todo-z',
+          title: 'Valid item',
+          completed: false,
+          createdAt: '2026-03-12T09:00:00.000Z',
+        },
+      ]),
+    );
+
+    const fixture = TestBed.createComponent(TodosPageComponent);
+    const component = fixture.componentInstance;
+
+    expect(component.totalCount()).toBe(1);
+    expect(component.visibleTodos()[0]?.title).toBe('Valid item');
+  });
+
   it('should add a new todo item with a UUID and persist to local storage', () => {
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
@@ -94,11 +141,13 @@ describe('TodosPageComponent', () => {
     expect(createdTodo?.id).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
     );
-    expect(createdTodo?.createdLabel.length ?? 0).toBeGreaterThan(0);
+    expect(createdTodo?.createdAt instanceof Date).toBe(true);
+    expect(Number.isNaN(createdTodo?.createdAt.getTime() ?? Number.NaN)).toBe(false);
 
-    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as TodoItem[];
+    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as StoredTodoItem[];
     expect(stored).toHaveLength(1);
     expect(stored[0]?.id).toBe(createdTodo?.id);
+    expect(typeof stored[0]?.createdAt).toBe('string');
   });
 
   it('should filter todo items by search query', () => {
@@ -229,8 +278,33 @@ describe('TodosPageComponent', () => {
     const updatedTodo = component.todos().find((todo) => todo.id === targetTodo.id);
     expect(updatedTodo?.completed).toBe(!targetTodo.completed);
 
-    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as TodoItem[];
+    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as StoredTodoItem[];
     expect(stored.find((todo) => todo.id === targetTodo.id)?.completed).toBe(!targetTodo.completed);
+  });
+
+  it('should handle deleteRequested from a todo item child component and persist the result', () => {
+    persistTodos(storedTodos);
+    const fixture = TestBed.createComponent(TodosPageComponent);
+    const component = fixture.componentInstance;
+
+    fixture.detectChanges();
+
+    const targetTodo = component.visibleTodos()[0];
+
+    if (!targetTodo) {
+      throw new Error('Expected at least one visible todo item.');
+    }
+
+    const child = fixture.debugElement.query(By.directive(TodoItemComponent))
+      .componentInstance as TodoItemComponent;
+
+    child.deleteRequested.emit(targetTodo.id);
+    fixture.detectChanges();
+
+    expect(component.todos().some((todo) => todo.id === targetTodo.id)).toBe(false);
+
+    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as StoredTodoItem[];
+    expect(stored.some((todo) => todo.id === targetTodo.id)).toBe(false);
   });
 
   it('should ignore unsupported filter values', () => {

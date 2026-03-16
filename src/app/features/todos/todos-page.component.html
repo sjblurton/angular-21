@@ -113,6 +113,7 @@
                   <app-todo-item
                     [todo]="todo"
                     (toggleRequested)="toggleTodo($event)"
+                    (deleteRequested)="deleteTodo($event)"
                   ></app-todo-item>
                 </li>
               }

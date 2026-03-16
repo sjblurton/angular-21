@@ -9,7 +9,7 @@ describe('TodoItemComponent', () => {
     id: 'todo-7',
     title: 'Document the component interactions',
     completed: false,
-    createdLabel: 'Now',
+    createdAt: new Date('2026-03-16T09:30:00.000Z'),
   };
 
   beforeEach(async () => {
@@ -49,10 +49,28 @@ describe('TodoItemComponent', () => {
     fixture.detectChanges();
 
     fixture.debugElement
-      .query(By.css('button'))
+      .query(By.css('.state-button'))
       .triggerEventHandler('click', new MouseEvent('click'));
 
     expect(fixture.nativeElement.textContent).toContain('Reopen');
     expect(emittedId).toBe(baseTodo.id);
+  });
+
+  it('should emit the todo id when the delete button is clicked', () => {
+    const fixture = TestBed.createComponent(TodoItemComponent);
+    const component = fixture.componentInstance;
+    let deletedId: string | undefined;
+
+    fixture.componentRef.setInput('todo', baseTodo);
+    component.deleteRequested.subscribe((todoId) => {
+      deletedId = todoId;
+    });
+    fixture.detectChanges();
+
+    fixture.debugElement
+      .query(By.css('.delete-button'))
+      .triggerEventHandler('click', new MouseEvent('click'));
+
+    expect(deletedId).toBe(baseTodo.id);
   });
 });

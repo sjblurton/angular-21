@@ -21,6 +21,13 @@ import { TodoFilter, TodoItem } from './todo.model';
 
 export const TODOS_STORAGE_KEY = 'todo-studio.todos';
 
+interface StoredTodoItem {
+  id: string;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
+
 const FILTER_LABELS: Record<TodoFilter, string> = {
   all: 'All items',
   active: 'Active items',
@@ -106,10 +113,35 @@ export class TodosPageComponent {
     return `${itemCount} ${itemLabel} in ${viewLabel}`;
   });
 
-  private readonly dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
+  private fromStoredTodo(value: unknown): TodoItem | null {
+    if (typeof value !== 'object' || value === null) {
+      return null;
+    }
+
+    const storedTodo = value as Partial<StoredTodoItem>;
+
+    if (
+      typeof storedTodo.id !== 'string' ||
+      typeof storedTodo.title !== 'string' ||
+      typeof storedTodo.completed !== 'boolean' ||
+      typeof storedTodo.createdAt !== 'string'
+    ) {
+      return null;
+    }
+
+    const createdAt = new Date(storedTodo.createdAt);
+
+    if (Number.isNaN(createdAt.getTime())) {
+      return null;
+    }
+
+    return {
+      id: storedTodo.id,
+      title: storedTodo.title,
+      completed: storedTodo.completed,
+      createdAt,
+    };
+  }
 
   private loadTodos(): TodoItem[] {
     const storedTodos = localStorage.getItem(TODOS_STORAGE_KEY);
@@ -119,15 +151,29 @@ export class TodosPageComponent {
     }
 
     try {
-      const parsedTodos = JSON.parse(storedTodos) as TodoItem[];
-      return Array.isArray(parsedTodos) ? parsedTodos : [];
+      const parsedTodos = JSON.parse(storedTodos) as unknown;
+
+      if (!Array.isArray(parsedTodos)) {
+        return [];
+      }
+
+      return parsedTodos
+        .map((todo) => this.fromStoredTodo(todo))
+        .filter((todo): todo is TodoItem => todo !== null);
     } catch {
       return [];
     }
   }
 
   private persistTodos(todos: TodoItem[]): void {
-    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+    const serializableTodos: StoredTodoItem[] = todos.map((todo) => ({
+      id: todo.id,
+      title: todo.title,
+      completed: todo.completed,
+      createdAt: todo.createdAt.toISOString(),
+    }));
+
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(serializableTodos));
   }
 
   addTodo(): void {
@@ -141,7 +187,7 @@ export class TodosPageComponent {
       id: crypto.randomUUID(),
       title,
       completed: false,
-      createdLabel: this.dateTimeFormatter.format(new Date()),
+      createdAt: new Date(),
     };
 
     const updatedTodos = [nextTodo, ...this.todos()];
@@ -156,6 +202,13 @@ export class TodosPageComponent {
     const updatedTodos = this.todos().map((todo) =>
       todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
     );
+
+    this.todos.set(updatedTodos);
+    this.persistTodos(updatedTodos);
+  }
+
+  deleteTodo(todoId: string): void {
+    const updatedTodos = this.todos().filter((todo) => todo.id !== todoId);
 
     this.todos.set(updatedTodos);
     this.persistTodos(updatedTodos);

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { formatDistanceToNow } from 'date-fns';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,14 +30,26 @@ import { TodoItem } from './todo.model';
         <p class="todo-title">{{ todo().title }}</p>
         <p class="todo-meta">
           {{ todo().completed ? 'Completed' : 'In progress' }} · Added
-          {{ todo().createdLabel }}
+          {{ createdAtLabel() }}
         </p>
       </div>
 
-      <button mat-stroked-button type="button" class="state-button" (click)="requestToggle()">
-        <mat-icon>{{ todo().completed ? 'refresh' : 'task_alt' }}</mat-icon>
-        {{ todo().completed ? 'Reopen' : 'Complete' }}
-      </button>
+      <div class="todo-actions">
+        <button mat-stroked-button type="button" class="state-button" (click)="requestToggle()">
+          <mat-icon>{{ todo().completed ? 'refresh' : 'task_alt' }}</mat-icon>
+          {{ todo().completed ? 'Reopen' : 'Complete' }}
+        </button>
+
+        <button
+          mat-icon-button
+          type="button"
+          class="delete-button"
+          [attr.aria-label]="'Delete ' + todo().title"
+          (click)="requestDelete()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </article>
   `,
   styles: [
@@ -102,16 +115,34 @@ import { TodoItem } from './todo.model';
       .state-button {
         border-radius: 999px;
         white-space: nowrap;
+        min-width: 0;
+        padding-inline: 0.75rem;
+      }
+
+      .todo-actions {
+        display: inline-flex;
+        align-items: center;
+        justify-self: end;
+        gap: 0.35rem;
+        flex-wrap: nowrap;
+      }
+
+      .delete-button {
+        color: color-mix(in srgb, var(--page-ink) 58%, #8b2f1e);
+      }
+
+      .delete-button:hover {
+        color: #8b2f1e;
+        background: rgba(139, 47, 30, 0.1);
       }
 
       @media (max-width: 720px) {
         .todo-item {
-          grid-template-columns: auto 1fr;
+          gap: 0.65rem;
         }
 
         .state-button {
-          grid-column: 1 / -1;
-          justify-self: start;
+          padding-inline: 0.6rem;
         }
       }
     `,
@@ -120,8 +151,17 @@ import { TodoItem } from './todo.model';
 export class TodoItemComponent {
   readonly todo = input.required<TodoItem>();
   readonly toggleRequested = output<string>();
+  readonly deleteRequested = output<string>();
+
+  readonly createdAtLabel = computed(() =>
+    formatDistanceToNow(this.todo().createdAt, { addSuffix: true }),
+  );
 
   requestToggle(): void {
     this.toggleRequested.emit(this.todo().id);
+  }
+
+  requestDelete(): void {
+    this.deleteRequested.emit(this.todo().id);
   }
 }
