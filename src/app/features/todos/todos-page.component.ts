@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { startWith } from 'rxjs';
 
-import { TodoItemComponent } from './todo-item.component';
+import { TodoItemComponent } from './components/todo-item/todo-item.component';
 import { TodoFilter, TodoItem } from './todo.model';
 
 export const TODOS_STORAGE_KEY = 'todo-studio.todos';

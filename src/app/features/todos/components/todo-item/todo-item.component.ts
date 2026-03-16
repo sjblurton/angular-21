@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
-import { TodoItem } from './todo.model';
+import { TodoItem } from '../../todo.model';
 
 @Component({
   selector: 'app-todo-item',

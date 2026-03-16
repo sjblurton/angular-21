@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { TodoItemComponent } from './todo-item.component';
-import { TodoItem } from './todo.model';
+import { TodoItem } from '../../todo.model';
 
 describe('TodoItemComponent', () => {
   const baseTodo: TodoItem = {
