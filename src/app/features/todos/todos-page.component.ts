@@ -30,7 +30,6 @@ import { trimmedRequiredValidator } from './validators/trimmed-required.validato
   styleUrl: './todos-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class TodosPageComponent {
   private readonly storage = inject(TodosStorageService);
 
