@@ -39,7 +39,9 @@ describe('TodosStorageService', () => {
     it('should skip entries with missing or wrongly-typed fields', () => {
       localStorage.setItem(
         TODOS_STORAGE_KEY,
-        JSON.stringify([{ id: 123, title: 'Bad', completed: false, createdAt: '2026-01-01T00:00:00.000Z' }]),
+        JSON.stringify([
+          { id: 123, title: 'Bad', completed: false, createdAt: '2026-01-01T00:00:00.000Z' },
+        ]),
       );
       expect(service.load()).toEqual([]);
     });
