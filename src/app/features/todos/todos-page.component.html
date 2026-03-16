@@ -1,0 +1,131 @@
+<main class="todo-page">
+  <section class="hero-shell" aria-labelledby="todo-studio-heading">
+    <mat-toolbar class="hero-toolbar">
+      <div class="brand-block" aria-label="Todo Studio home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy">Todo Studio</span>
+      </div>
+
+      <span class="toolbar-spacer"></span>
+
+      <p class="toolbar-caption">Design-led daily planning</p>
+    </mat-toolbar>
+
+    <div class="hero-grid">
+      <section class="hero-copy">
+        <p class="eyebrow">Plan with intention</p>
+        <h1 id="todo-studio-heading">A calm board for capturing, finding, and finishing work.</h1>
+        <p class="hero-text">
+          Add tasks, search instantly, and switch between all, active, and completed views without
+          losing context.
+        </p>
+
+        <div class="stat-rail" aria-label="Todo summary">
+          <article class="stat-card">
+            <span class="stat-label">Total</span>
+            <strong class="stat-value">{{ totalCount() }}</strong>
+          </article>
+
+          <article class="stat-card">
+            <span class="stat-label">Active</span>
+            <strong class="stat-value">{{ activeCount() }}</strong>
+          </article>
+
+          <article class="stat-card stat-card-support">
+            <span class="stat-label">Completed</span>
+            <strong class="stat-value">{{ completedCount() }}</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="workspace-card" aria-labelledby="workspace-heading">
+        <div class="workspace-header">
+          <p class="workspace-kicker">Today&apos;s focus</p>
+          <h2 id="workspace-heading">Keep the queue clear and visible.</h2>
+        </div>
+
+        <form class="composer" [formGroup]="addTodoForm" (ngSubmit)="addTodo()" novalidate>
+          <mat-form-field appearance="outline" class="title-field">
+            <mat-label>Add an item</mat-label>
+            <input
+              matInput
+              formControlName="title"
+              maxlength="120"
+              placeholder="Outline launch notes"
+            />
+            <mat-hint align="end">{{ addTodoControl.value.length }}/120</mat-hint>
+
+            @if (addTodoControl.touched && addTodoControl.hasError('trimmedRequired')) {
+              <mat-error>Enter a task before adding it.</mat-error>
+            }
+
+            @if (addTodoControl.touched && addTodoControl.hasError('maxlength')) {
+              <mat-error>Keep each task under 120 characters.</mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-flat-button type="submit" class="add-button">
+            <mat-icon>add_task</mat-icon>
+            Add item
+          </button>
+        </form>
+
+        <div class="filters-panel">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search items</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [formControl]="searchControl" placeholder="Search by task name" />
+          </mat-form-field>
+
+          <div class="status-group">
+            <span class="status-label">Status</span>
+            <mat-button-toggle-group
+              name="statusFilter"
+              class="status-toggle"
+              [value]="selectedFilter()"
+              aria-label="Filter items by status"
+              (change)="setFilter($event.value)"
+            >
+              <mat-button-toggle value="all">All</mat-button-toggle>
+              <mat-button-toggle value="active">Active</mat-button-toggle>
+              <mat-button-toggle value="completed">Completed</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <div class="results-bar">
+          <p class="results-copy" aria-live="polite">{{ resultsSummary() }}</p>
+
+          @if (selectedFilter() !== 'all' || searchDisplayValue().length > 0) {
+            <button mat-stroked-button type="button" (click)="clearFilters()">Reset view</button>
+          }
+        </div>
+
+        <section class="todo-list-region" aria-labelledby="todo-list-heading">
+          <div class="list-heading-row">
+            <h3 id="todo-list-heading">Task list</h3>
+          </div>
+
+          @if (visibleTodos().length > 0) {
+            <ul class="todo-list" role="list">
+              @for (todo of visibleTodos(); track todo.id) {
+                <li class="todo-list-item">
+                  <app-todo-item
+                    [todo]="todo"
+                    (toggleRequested)="toggleTodo($event)"
+                  ></app-todo-item>
+                </li>
+              }
+            </ul>
+          } @else {
+            <div class="empty-state" aria-live="polite">
+              <mat-icon>search_off</mat-icon>
+              <h3>No items match this view.</h3>
+              <p>Try a broader search or switch the status filter.</p>
+            </div>
+          }
+        </section>
+      </section>
+    </div>
+  </section>
+</main>

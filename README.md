@@ -44,6 +44,31 @@ To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use th
 ng test
 ```
 
+## Running coverage (100% minimum)
+
+This project includes a strict coverage command that enforces 100% minimum coverage for statements, branches, functions, and lines.
+
+```bash
+npm run test:coverage
+```
+
+If the coverage drops below 100% in any metric, the command exits with an error.
+
+Coverage reports are written to:
+
+```text
+coverage/angular-21/index.html
+```
+
+## Continuous integration
+
+GitHub Actions runs CI on every push and pull request using:
+
+1. Build verification via `npm run build`
+2. Strict coverage verification via `npm run test:coverage`
+
+The workflow is defined in `.github/workflows/ci.yml`.
+
 ## Running end-to-end tests
 
 For end-to-end (e2e) testing, run:

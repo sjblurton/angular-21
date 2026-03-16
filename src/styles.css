@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/rose-red.css';
+
+:root {
+  color-scheme: light;
+  --page-bg: #f8efe3;
+  --page-bg-soft: rgba(255, 249, 243, 0.82);
+  --page-ink: #231b18;
+  --page-muted: #6c625d;
+  --card-border: rgba(54, 34, 26, 0.08);
+  --card-shadow: 0 28px 80px rgba(63, 37, 26, 0.14);
+  --accent: #b54b34;
+  --accent-deep: #7d2f20;
+  --accent-soft: rgba(181, 75, 52, 0.12);
+  --support: #3c7b67;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  color: var(--page-ink);
+  background:
+    radial-gradient(circle at top left, rgba(241, 163, 118, 0.42), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(90, 143, 121, 0.25), transparent 30%),
+    linear-gradient(180deg, #fff8f0 0%, var(--page-bg) 58%, #f2e7da 100%);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
