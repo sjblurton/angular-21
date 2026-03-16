@@ -1,13 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,17 +11,8 @@ import { startWith } from 'rxjs';
 
 import { TodoItemComponent } from './components/todo-item/todo-item.component';
 import { TodosStorageService } from './services/todos-storage.service';
-import { TodoFilter, TodoItem } from './todo.model';
-
-const FILTER_LABELS: Record<TodoFilter, string> = {
-  all: 'All items',
-  active: 'Active items',
-  completed: 'Completed items',
-};
-
-function trimmedRequiredValidator(control: AbstractControl<string>): ValidationErrors | null {
-  return control.value.trim().length > 0 ? null : { trimmedRequired: true };
-}
+import { FILTER_LABELS, TodoFilter, TodoItem } from './todo.model';
+import { trimmedRequiredValidator } from './validators/trimmed-required.validator';
 
 @Component({
   selector: 'app-todos-page',
@@ -46,6 +30,7 @@ function trimmedRequiredValidator(control: AbstractControl<string>): ValidationE
   styleUrl: './todos-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class TodosPageComponent {
   private readonly storage = inject(TodosStorageService);
 
@@ -125,8 +110,6 @@ export class TodosPageComponent {
     this.todos.set(updatedTodos);
     this.storage.persist(updatedTodos);
     this.addTodoForm.reset({ title: '' });
-    this.addTodoControl.markAsPristine();
-    this.addTodoControl.markAsUntouched();
   }
 
   toggleTodo(todoId: string): void {
