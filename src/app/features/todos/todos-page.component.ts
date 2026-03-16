@@ -19,38 +19,13 @@ import { startWith } from 'rxjs';
 import { TodoItemComponent } from './todo-item.component';
 import { TodoFilter, TodoItem } from './todo.model';
 
+export const TODOS_STORAGE_KEY = 'todo-studio.todos';
+
 const FILTER_LABELS: Record<TodoFilter, string> = {
   all: 'All items',
   active: 'Active items',
   completed: 'Completed items',
 };
-
-const INITIAL_TODOS: TodoItem[] = [
-  {
-    id: 1,
-    title: 'Sketch the onboarding headline hierarchy',
-    completed: false,
-    createdLabel: '9:10 AM',
-  },
-  {
-    id: 2,
-    title: 'Prototype the moodboard footer interactions',
-    completed: false,
-    createdLabel: '10:25 AM',
-  },
-  {
-    id: 3,
-    title: 'Share the launch checklist with the product team',
-    completed: true,
-    createdLabel: 'Yesterday',
-  },
-  {
-    id: 4,
-    title: 'Tighten the accessibility notes for form controls',
-    completed: false,
-    createdLabel: 'Yesterday',
-  },
-];
 
 function trimmedRequiredValidator(control: AbstractControl<string>): ValidationErrors | null {
   return control.value.trim().length > 0 ? null : { trimmedRequired: true };
@@ -87,7 +62,7 @@ export class TodosPageComponent {
   });
 
   readonly selectedFilter = signal<TodoFilter>('all');
-  readonly todos = signal<TodoItem[]>(INITIAL_TODOS);
+  readonly todos = signal<TodoItem[]>(this.loadTodos());
   readonly totalCount = computed(() => this.todos().length);
   readonly activeCount = computed(() => this.todos().filter((todo) => !todo.completed).length);
   readonly completedCount = computed(() => this.todos().filter((todo) => todo.completed).length);
@@ -131,11 +106,29 @@ export class TodosPageComponent {
     return `${itemCount} ${itemLabel} in ${viewLabel}`;
   });
 
-  private nextId = INITIAL_TODOS.length + 1;
-  private readonly timeFormatter = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
+  private readonly dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
   });
+
+  private loadTodos(): TodoItem[] {
+    const storedTodos = localStorage.getItem(TODOS_STORAGE_KEY);
+
+    if (!storedTodos) {
+      return [];
+    }
+
+    try {
+      const parsedTodos = JSON.parse(storedTodos) as TodoItem[];
+      return Array.isArray(parsedTodos) ? parsedTodos : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private persistTodos(todos: TodoItem[]): void {
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+  }
 
   addTodo(): void {
     if (this.addTodoForm.invalid) {
@@ -145,23 +138,27 @@ export class TodosPageComponent {
 
     const title = this.addTodoControl.value.trim();
     const nextTodo: TodoItem = {
-      id: this.nextId,
+      id: crypto.randomUUID(),
       title,
       completed: false,
-      createdLabel: this.timeFormatter.format(new Date()),
+      createdLabel: this.dateTimeFormatter.format(new Date()),
     };
 
-    this.nextId += 1;
-    this.todos.update((items) => [nextTodo, ...items]);
+    const updatedTodos = [nextTodo, ...this.todos()];
+    this.todos.set(updatedTodos);
+    this.persistTodos(updatedTodos);
     this.addTodoForm.reset({ title: '' });
     this.addTodoControl.markAsPristine();
     this.addTodoControl.markAsUntouched();
   }
 
-  toggleTodo(todoId: number): void {
-    this.todos.update((items) =>
-      items.map((todo) => (todo.id === todoId ? { ...todo, completed: !todo.completed } : todo)),
+  toggleTodo(todoId: string): void {
+    const updatedTodos = this.todos().map((todo) =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
     );
+
+    this.todos.set(updatedTodos);
+    this.persistTodos(updatedTodos);
   }
 
   setFilter(filter: string | null): void {

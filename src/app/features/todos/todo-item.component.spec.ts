@@ -6,7 +6,7 @@ import { TodoItem } from './todo.model';
 
 describe('TodoItemComponent', () => {
   const baseTodo: TodoItem = {
-    id: 7,
+    id: 'todo-7',
     title: 'Document the component interactions',
     completed: false,
     createdLabel: 'Now',
@@ -21,7 +21,7 @@ describe('TodoItemComponent', () => {
   it('should emit the todo id when the checkbox change event fires', () => {
     const fixture = TestBed.createComponent(TodoItemComponent);
     const component = fixture.componentInstance;
-    let emittedId: number | undefined;
+    let emittedId: string | undefined;
 
     fixture.componentRef.setInput('todo', baseTodo);
     component.toggleRequested.subscribe((todoId) => {
@@ -37,7 +37,7 @@ describe('TodoItemComponent', () => {
   it('should emit the todo id when the action button is clicked', () => {
     const fixture = TestBed.createComponent(TodoItemComponent);
     const component = fixture.componentInstance;
-    let emittedId: number | undefined;
+    let emittedId: string | undefined;
 
     fixture.componentRef.setInput('todo', {
       ...baseTodo,

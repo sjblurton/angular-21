@@ -3,24 +3,83 @@ import { By } from '@angular/platform-browser';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 
 import { TodoItemComponent } from './todo-item.component';
-import { TodosPageComponent } from './todos-page.component';
+import { TodoItem } from './todo.model';
+import { TODOS_STORAGE_KEY, TodosPageComponent } from './todos-page.component';
 
 describe('TodosPageComponent', () => {
+  const storedTodos: TodoItem[] = [
+    {
+      id: 'todo-1',
+      title: 'Sketch the onboarding headline hierarchy',
+      completed: false,
+      createdLabel: 'Now',
+    },
+    {
+      id: 'todo-2',
+      title: 'Prototype the moodboard footer interactions',
+      completed: false,
+      createdLabel: 'Now',
+    },
+    {
+      id: 'todo-3',
+      title: 'Share the launch checklist with the product team',
+      completed: true,
+      createdLabel: 'Yesterday',
+    },
+    {
+      id: 'todo-4',
+      title: 'Tighten the accessibility notes for form controls',
+      completed: false,
+      createdLabel: 'Yesterday',
+    },
+  ];
+
+  const persistTodos = (todos: TodoItem[]): void => {
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+  };
+
   beforeEach(async () => {
+    localStorage.clear();
+
     await TestBed.configureTestingModule({
       imports: [TodosPageComponent],
     }).compileComponents();
   });
 
-  it('should create the todo page', () => {
+  it('should create the todo page with no items when local storage is empty', () => {
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
     expect(component).toBeTruthy();
-    expect(component.totalCount()).toBe(4);
+    expect(component.totalCount()).toBe(0);
   });
 
-  it('should add a new todo item', () => {
+  it('should load stored todo items from local storage', () => {
+    persistTodos(storedTodos);
+    const fixture = TestBed.createComponent(TodosPageComponent);
+    const component = fixture.componentInstance;
+
+    expect(component.totalCount()).toBe(4);
+    expect(component.visibleTodos()[0]?.title).toBe(storedTodos[0].title);
+  });
+
+  it('should use an empty list when local storage contains malformed JSON', () => {
+    localStorage.setItem(TODOS_STORAGE_KEY, '{invalid-json');
+    const fixture = TestBed.createComponent(TodosPageComponent);
+    const component = fixture.componentInstance;
+
+    expect(component.totalCount()).toBe(0);
+  });
+
+  it('should use an empty list when local storage value is not an array', () => {
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify({ value: 'invalid' }));
+    const fixture = TestBed.createComponent(TodosPageComponent);
+    const component = fixture.componentInstance;
+
+    expect(component.totalCount()).toBe(0);
+  });
+
+  it('should add a new todo item with a UUID and persist to local storage', () => {
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
@@ -28,11 +87,22 @@ describe('TodosPageComponent', () => {
     component.addTodo();
     fixture.detectChanges();
 
-    expect(component.totalCount()).toBe(5);
-    expect(component.visibleTodos()[0]?.title).toBe('Ship the handoff deck');
+    const createdTodo = component.visibleTodos()[0];
+
+    expect(component.totalCount()).toBe(1);
+    expect(createdTodo?.title).toBe('Ship the handoff deck');
+    expect(createdTodo?.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+    expect(createdTodo?.createdLabel.length ?? 0).toBeGreaterThan(0);
+
+    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as TodoItem[];
+    expect(stored).toHaveLength(1);
+    expect(stored[0]?.id).toBe(createdTodo?.id);
   });
 
   it('should filter todo items by search query', () => {
+    persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
@@ -45,6 +115,7 @@ describe('TodosPageComponent', () => {
   });
 
   it('should show completed items after toggling and changing the filter', () => {
+    persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
     const targetTodo = component.visibleTodos().find((todo) => !todo.completed);
@@ -88,13 +159,11 @@ describe('TodosPageComponent', () => {
   });
 
   it('should apply the active filter when the toggle group emits a change', () => {
+    persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();
-
-    const toggleGroup = fixture.debugElement.query(By.directive(MatButtonToggleGroup))
-      .componentInstance as MatButtonToggleGroup;
 
     fixture.debugElement
       .query(By.directive(MatButtonToggleGroup))
@@ -106,6 +175,7 @@ describe('TodosPageComponent', () => {
   });
 
   it('should clear search and filters through the reset view button', () => {
+    persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
@@ -126,6 +196,7 @@ describe('TodosPageComponent', () => {
   });
 
   it('should render the empty state when no items match the current search', () => {
+    persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
@@ -136,7 +207,8 @@ describe('TodosPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('No items match this view.');
   });
 
-  it('should handle toggleRequested from a todo item child component', () => {
+  it('should handle toggleRequested from a todo item child component and persist the result', () => {
+    persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
@@ -154,9 +226,11 @@ describe('TodosPageComponent', () => {
     child.toggleRequested.emit(targetTodo.id);
     fixture.detectChanges();
 
-    expect(component.todos().find((todo) => todo.id === targetTodo.id)?.completed).toBe(
-      !targetTodo.completed,
-    );
+    const updatedTodo = component.todos().find((todo) => todo.id === targetTodo.id);
+    expect(updatedTodo?.completed).toBe(!targetTodo.completed);
+
+    const stored = JSON.parse(localStorage.getItem(TODOS_STORAGE_KEY) ?? '[]') as TodoItem[];
+    expect(stored.find((todo) => todo.id === targetTodo.id)?.completed).toBe(!targetTodo.completed);
   });
 
   it('should ignore unsupported filter values', () => {

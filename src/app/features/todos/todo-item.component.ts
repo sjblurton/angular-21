@@ -119,7 +119,7 @@ import { TodoItem } from './todo.model';
 })
 export class TodoItemComponent {
   readonly todo = input.required<TodoItem>();
-  readonly toggleRequested = output<number>();
+  readonly toggleRequested = output<string>();
 
   requestToggle(): void {
     this.toggleRequested.emit(this.todo().id);

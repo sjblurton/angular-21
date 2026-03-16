@@ -1,7 +1,7 @@
 export type TodoFilter = 'all' | 'active' | 'completed';
 
 export interface TodoItem {
-  id: number;
+  id: string;
   title: string;
   completed: boolean;
   createdLabel: string;
