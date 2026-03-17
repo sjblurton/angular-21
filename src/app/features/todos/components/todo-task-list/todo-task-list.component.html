@@ -1,4 +1,8 @@
-<section class="todo-list-region" aria-labelledby="todo-list-heading">
+<section
+  [attr.data-testid]="testIds.root"
+  class="todo-list-region"
+  aria-labelledby="todo-list-heading"
+>
   <div class="list-heading-row">
     <h3 id="todo-list-heading">Task list</h3>
   </div>
@@ -18,7 +22,7 @@
   } @else {
     <div class="empty-state" aria-live="polite">
       <mat-icon>search_off</mat-icon>
-      <h3>No items match this view.</h3>
+      <h3 [attr.data-testid]="testIds.emptyHeading">No items match this view.</h3>
       <p>Try a broader search or switch the status filter.</p>
     </div>
   }
