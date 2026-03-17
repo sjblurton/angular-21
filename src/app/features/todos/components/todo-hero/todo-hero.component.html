@@ -1,0 +1,27 @@
+<section class="hero-shell" aria-labelledby="todo-studio-heading">
+  <mat-toolbar class="hero-toolbar">
+    <div class="brand-block" aria-label="Todo Studio home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">Todo Studio</span>
+    </div>
+
+    <span class="toolbar-spacer"></span>
+
+    <p class="toolbar-caption">Design-led daily planning</p>
+  </mat-toolbar>
+
+  <div class="hero-grid">
+    <section class="hero-copy">
+      <h1 id="todo-studio-heading">Task workspace for focused execution.</h1>
+      <p class="hero-text">Add, filter, and complete items without losing context.</p>
+
+      <app-todo-summary
+        [total]="total()"
+        [active]="active()"
+        [completed]="completed()"
+      ></app-todo-summary>
+    </section>
+
+    <ng-content></ng-content>
+  </div>
+</section>
