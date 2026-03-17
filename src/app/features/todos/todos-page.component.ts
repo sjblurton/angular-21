@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { startWith } from 'rxjs';
 
-import { TodoItemComponent } from './components/todo-item/todo-item.component';
+import { TodoAddFormComponent } from './components/todo-add-form/todo-add-form.component';
+import { TodoFiltersPanelComponent } from './components/todo-filters-panel/todo-filters-panel.component';
+import { TodoHeroComponent } from './components/todo-hero/todo-hero.component';
+import { TodoTaskListComponent } from './components/todo-task-list/todo-task-list.component';
 import { TodosStorageService } from './services/todos-storage.service';
 import { FILTER_LABELS, TodoFilter, TodoItem } from './todo.model';
 import { trimmedRequiredValidator } from './validators/trimmed-required.validator';
@@ -18,13 +16,10 @@ import { trimmedRequiredValidator } from './validators/trimmed-required.validato
   selector: 'app-todos-page',
   imports: [
     MatButtonModule,
-    MatButtonToggleModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatToolbarModule,
-    ReactiveFormsModule,
-    TodoItemComponent,
+    TodoAddFormComponent,
+    TodoFiltersPanelComponent,
+    TodoHeroComponent,
+    TodoTaskListComponent,
   ],
   templateUrl: './todos-page.component.html',
   styleUrl: './todos-page.component.css',

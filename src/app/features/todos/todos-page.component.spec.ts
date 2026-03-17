@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 
-import { TodoItemComponent } from './components/todo-item/todo-item.component';
+import { TodoFiltersPanelComponent } from './components/todo-filters-panel/todo-filters-panel.component';
+import { TodoTaskListComponent } from './components/todo-task-list/todo-task-list.component';
 import { TODOS_STORAGE_KEY } from './services/todos-storage.service';
 import { TodoItem } from './todo.model';
 import { TodosPageComponent } from './todos-page.component';
@@ -208,16 +208,17 @@ describe('TodosPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Keep each task under 120 characters.');
   });
 
-  it('should apply the active filter when the toggle group emits a change', () => {
+  it('should apply the active filter when the filters panel emits a change', () => {
     persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();
 
-    fixture.debugElement
-      .query(By.directive(MatButtonToggleGroup))
-      .triggerEventHandler('change', { value: 'active' });
+    const filtersPanel = fixture.debugElement.query(By.directive(TodoFiltersPanelComponent))
+      .componentInstance as TodoFiltersPanelComponent;
+
+    filtersPanel.filterChanged.emit('active');
     fixture.detectChanges();
 
     expect(component.selectedFilter()).toBe('active');
@@ -257,7 +258,7 @@ describe('TodosPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('No items match this view.');
   });
 
-  it('should handle toggleRequested from a todo item child component and persist the result', () => {
+  it('should handle toggleRequested from the task list child component and persist the result', () => {
     persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
@@ -270,10 +271,10 @@ describe('TodosPageComponent', () => {
       throw new Error('Expected at least one visible todo item.');
     }
 
-    const child = fixture.debugElement.query(By.directive(TodoItemComponent))
-      .componentInstance as TodoItemComponent;
+    const taskList = fixture.debugElement.query(By.directive(TodoTaskListComponent))
+      .componentInstance as TodoTaskListComponent;
 
-    child.toggleRequested.emit(targetTodo.id);
+    taskList.toggleRequested.emit(targetTodo.id);
     fixture.detectChanges();
 
     const updatedTodo = component.todos().find((todo) => todo.id === targetTodo.id);
@@ -283,7 +284,7 @@ describe('TodosPageComponent', () => {
     expect(stored.find((todo) => todo.id === targetTodo.id)?.completed).toBe(!targetTodo.completed);
   });
 
-  it('should handle deleteRequested from a todo item child component and persist the result', () => {
+  it('should handle deleteRequested from the task list child component and persist the result', () => {
     persistTodos(storedTodos);
     const fixture = TestBed.createComponent(TodosPageComponent);
     const component = fixture.componentInstance;
@@ -296,10 +297,10 @@ describe('TodosPageComponent', () => {
       throw new Error('Expected at least one visible todo item.');
     }
 
-    const child = fixture.debugElement.query(By.directive(TodoItemComponent))
-      .componentInstance as TodoItemComponent;
+    const taskList = fixture.debugElement.query(By.directive(TodoTaskListComponent))
+      .componentInstance as TodoTaskListComponent;
 
-    child.deleteRequested.emit(targetTodo.id);
+    taskList.deleteRequested.emit(targetTodo.id);
     fixture.detectChanges();
 
     expect(component.todos().some((todo) => todo.id === targetTodo.id)).toBe(false);
