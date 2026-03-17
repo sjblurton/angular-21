@@ -1,16 +1,18 @@
-<div class="stat-rail" aria-label="Todo summary">
+<div [attr.data-testid]="testIds.root" class="stat-rail" aria-label="Todo summary">
   <article class="stat-card">
     <span class="stat-label">Total</span>
-    <strong class="stat-value">{{ total() }}</strong>
+    <strong class="stat-value" [attr.data-testid]="testIds.totalValue">{{ total() }}</strong>
   </article>
 
   <article class="stat-card">
     <span class="stat-label">Active</span>
-    <strong class="stat-value">{{ active() }}</strong>
+    <strong class="stat-value" [attr.data-testid]="testIds.activeValue">{{ active() }}</strong>
   </article>
 
   <article class="stat-card stat-card-support">
     <span class="stat-label">Completed</span>
-    <strong class="stat-value">{{ completed() }}</strong>
+    <strong class="stat-value" [attr.data-testid]="testIds.completedValue">{{
+      completed()
+    }}</strong>
   </article>
 </div>
