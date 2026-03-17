@@ -1,0 +1,74 @@
+:host {
+  display: block;
+}
+
+.todo-list-region {
+  padding-top: 0.35rem;
+}
+
+.list-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.list-heading-row h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.todo-list-item {
+  animation: item-in 520ms cubic-bezier(0.18, 0.72, 0.18, 1);
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding: 2.4rem 1.2rem;
+  border-radius: 24px;
+  border: 1px dashed rgba(181, 75, 52, 0.24);
+  background: rgba(255, 250, 245, 0.72);
+  text-align: center;
+}
+
+.empty-state h3,
+.empty-state p {
+  margin: 0;
+}
+
+.empty-state mat-icon {
+  width: 2rem;
+  height: 2rem;
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+.empty-state p {
+  max-width: 28ch;
+  color: var(--page-muted);
+  line-height: 1.6;
+}
+
+@keyframes item-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
