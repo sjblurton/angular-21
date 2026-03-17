@@ -79,7 +79,15 @@ The workflow is defined in `.github/workflows/ci.yml`.
 
 ## Running end-to-end tests
 
-End-to-end tests are written with [Playwright](https://playwright.dev/) and live in the `e2e/` folder. The dev server starts automatically when you run the tests.
+End-to-end tests are written with [Playwright](https://playwright.dev/) and live in the `e2e/` folder.
+
+Start the Angular dev server in one terminal first:
+
+```bash
+npm run start
+```
+
+Then run e2e commands from a second terminal.
 
 Run all e2e tests headlessly:
 
@@ -99,7 +107,7 @@ View the last HTML report in your browser:
 npm run e2e:report
 ```
 
-> The tests reuse a running `ng serve` instance on port 4200 if one is already active, so there is no need to start the server manually in your local workflow.
+> The e2e tests expect the app to be available at `http://localhost:4200`. If the dev server is not running, Playwright will fail with connection errors.
 
 ## Generated test IDs
 
