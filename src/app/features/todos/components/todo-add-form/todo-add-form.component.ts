@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { todoAddFormTestIds } from './todo-add-form.test-ids';
 
 type TodoTitleFormGroup = FormGroup<{
   title: FormControl<string>;
@@ -23,6 +24,8 @@ type TodoTitleFormGroup = FormGroup<{
   styleUrl: './todo-add-form.component.css',
 })
 export class TodoAddFormComponent {
+  protected readonly testIds = todoAddFormTestIds;
+
   readonly addTodoForm = input.required<TodoTitleFormGroup>();
   readonly titleControl = input.required<FormControl<string>>();
   readonly addRequested = output<void>();
