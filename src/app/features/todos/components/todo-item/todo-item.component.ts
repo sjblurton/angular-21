@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { DistanceToNowPipe } from '../../pipes/distance-to-now.pipe';
 import { TodoItem } from '../../todo.model';
+import { todoItemTestIds } from './todo-item.test-ids';
 
 @Component({
   selector: 'app-todo-item',
@@ -17,6 +18,8 @@ import { TodoItem } from '../../todo.model';
   styleUrl: './todo-item.component.css',
 })
 export class TodoItemComponent {
+  protected readonly testIds = todoItemTestIds;
+
   readonly todo = input.required<TodoItem>();
   readonly toggleRequested = output<string>();
   readonly deleteRequested = output<string>();

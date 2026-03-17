@@ -1,6 +1,11 @@
-<article class="todo-item" [class.todo-item-complete]="todo().completed">
+<article
+  class="todo-item"
+  [class.todo-item-complete]="todo().completed"
+  [attr.data-testid]="testIds.root"
+>
   <mat-checkbox
     class="todo-toggle"
+    [attr.data-testid]="testIds.checkbox"
     [checked]="todo().completed"
     [aria-label]="
       todo().completed
@@ -11,15 +16,21 @@
   ></mat-checkbox>
 
   <div class="todo-copy">
-    <p class="todo-title">{{ todo().title }}</p>
-    <p class="todo-meta">
+    <p class="todo-title" [attr.data-testid]="testIds.title">{{ todo().title }}</p>
+    <p class="todo-meta" [attr.data-testid]="testIds.meta">
       {{ todo().completed ? 'Completed' : 'In progress' }} · Added
       {{ todo().createdAt | distanceToNow }}
     </p>
   </div>
 
   <div class="todo-actions">
-    <button mat-stroked-button type="button" class="state-button" (click)="requestToggle()">
+    <button
+      mat-stroked-button
+      type="button"
+      class="state-button"
+      [attr.data-testid]="testIds.stateButton"
+      (click)="requestToggle()"
+    >
       <mat-icon>{{ todo().completed ? 'refresh' : 'task_alt' }}</mat-icon>
       {{ todo().completed ? 'Reopen' : 'Complete' }}
     </button>
@@ -28,6 +39,7 @@
       mat-icon-button
       type="button"
       class="delete-button"
+      [attr.data-testid]="testIds.deleteButton"
       [attr.aria-label]="'Delete ' + todo().title"
       (click)="requestDelete()"
     >
