@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 import { TodoFilter } from '../../todo.model';
+import { todoFiltersPanelTestIds } from './todo-filters-panel.test-ids';
 
 @Component({
   selector: 'app-todo-filters-panel',
@@ -21,6 +22,8 @@ import { TodoFilter } from '../../todo.model';
   styleUrl: './todo-filters-panel.component.css',
 })
 export class TodoFiltersPanelComponent {
+  protected readonly testIds = todoFiltersPanelTestIds;
+
   readonly searchControl = input.required<FormControl<string>>();
   readonly selectedFilter = input.required<TodoFilter>();
   readonly filterChanged = output<string | null>();

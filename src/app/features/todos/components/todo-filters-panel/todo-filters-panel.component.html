@@ -1,8 +1,13 @@
-<div class="filters-panel">
+<div [attr.data-testid]="testIds.root" class="filters-panel">
   <mat-form-field appearance="outline" class="search-field">
     <mat-label>Search items</mat-label>
     <mat-icon matPrefix>search</mat-icon>
-    <input matInput [formControl]="searchControl()" placeholder="Search by task name" />
+    <input
+      matInput
+      [formControl]="searchControl()"
+      placeholder="Search by task name"
+      [attr.data-testid]="testIds.searchInput"
+    />
   </mat-form-field>
 
   <div class="status-group">
@@ -14,9 +19,13 @@
       aria-label="Filter items by status"
       (change)="requestFilterChange($event.value)"
     >
-      <mat-button-toggle value="all">All</mat-button-toggle>
-      <mat-button-toggle value="active">Active</mat-button-toggle>
-      <mat-button-toggle value="completed">Completed</mat-button-toggle>
+      <mat-button-toggle value="all" [attr.data-testid]="testIds.filterAll">All</mat-button-toggle>
+      <mat-button-toggle value="active" [attr.data-testid]="testIds.filterActive"
+        >Active</mat-button-toggle
+      >
+      <mat-button-toggle value="completed" [attr.data-testid]="testIds.filterCompleted"
+        >Completed</mat-button-toggle
+      >
     </mat-button-toggle-group>
   </div>
 </div>
