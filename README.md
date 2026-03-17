@@ -60,6 +60,14 @@ Coverage reports are written to:
 coverage/angular-21/index.html
 ```
 
+To browse the HTML report locally, run:
+
+```bash
+npm run coverage:open
+```
+
+Then open `http://localhost:4201` in your browser.
+
 ## Continuous integration
 
 GitHub Actions runs CI on every push and pull request using:
@@ -71,13 +79,62 @@ The workflow is defined in `.github/workflows/ci.yml`.
 
 ## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
+End-to-end tests are written with [Playwright](https://playwright.dev/) and live in the `e2e/` folder. The dev server starts automatically when you run the tests.
+
+Run all e2e tests headlessly:
 
 ```bash
-ng e2e
+npm run e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Open the interactive Playwright UI (useful for debugging):
+
+```bash
+npm run e2e:ui
+```
+
+View the last HTML report in your browser:
+
+```bash
+npm run e2e:report
+```
+
+> The tests reuse a running `ng serve` instance on port 4200 if one is already active, so there is no need to start the server manually in your local workflow.
+
+## Generated test IDs
+
+This project uses a shared test-id generator to avoid hardcoded `data-testid` strings.
+
+- Generator implementation: `src/app/shared/testing/test-id-generator.ts`
+- Per-component ID maps: colocated `*.test-ids.ts` files beside each component/page
+
+Create component/page IDs with the generator:
+
+```ts
+import { generateTestIds } from '../../../../shared/testing/test-id-generator';
+
+const { scopeTestId, titleInputTestId, submitButtonTestId } = generateTestIds({
+  scopeName: 'addForm',
+}).add('titleInput', 'submitButton');
+
+export const todoAddFormTestIds = {
+  root: scopeTestId,
+  titleInput: titleInputTestId,
+  submitButton: submitButtonTestId,
+} as const;
+```
+
+Use IDs in templates through bindings:
+
+```html
+<input [attr.data-testid]="testIds.titleInput" />
+```
+
+Use the same IDs in Playwright selectors:
+
+```ts
+page.getByTestId(TestId.addForm.titleInput);
+```
 
 ## Additional Resources
 
