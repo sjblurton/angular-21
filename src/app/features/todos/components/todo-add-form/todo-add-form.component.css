@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+.title-field {
+  width: 100%;
+}
+
+.add-button {
+  min-height: 56px;
+  border-radius: 18px;
+  padding-inline: 1.15rem;
+}
+
+@media (max-width: 760px) {
+  .composer {
+    grid-template-columns: 1fr;
+  }
+}

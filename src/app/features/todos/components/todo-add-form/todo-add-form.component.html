@@ -1,0 +1,20 @@
+<form class="composer" [formGroup]="addTodoForm()" (ngSubmit)="requestAdd()" novalidate>
+  <mat-form-field appearance="outline" class="title-field">
+    <mat-label>Add an item</mat-label>
+    <input matInput formControlName="title" maxlength="120" placeholder="Outline launch notes" />
+    <mat-hint align="end">{{ titleControl().value.length }}/120</mat-hint>
+
+    @if (titleControl().touched && titleControl().hasError('trimmedRequired')) {
+      <mat-error>Enter a task before adding it.</mat-error>
+    }
+
+    @if (titleControl().touched && titleControl().hasError('maxlength')) {
+      <mat-error>Keep each task under 120 characters.</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-flat-button type="submit" class="add-button">
+    <mat-icon>add_task</mat-icon>
+    Add item
+  </button>
+</form>
