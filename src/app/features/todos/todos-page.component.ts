@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { startWith } from 'rxjs';
 
 import { TodoAddFormComponent } from './components/todo-add-form/todo-add-form.component';
 import { TodoFiltersPanelComponent } from './components/todo-filters-panel/todo-filters-panel.component';
 import { TodoHeroComponent } from './components/todo-hero/todo-hero.component';
 import { TodoTaskListComponent } from './components/todo-task-list/todo-task-list.component';
-import { TodosStorageService } from './services/todos-storage.service';
-import { FILTER_LABELS, TodoFilter, TodoItem } from './todo.model';
+import { TodosFacadeService } from './services/todos-facade.service';
 import { trimmedRequiredValidator } from './validators/trimmed-required.validator';
 
 @Component({
@@ -26,8 +23,9 @@ import { trimmedRequiredValidator } from './validators/trimmed-required.validato
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosPageComponent {
-  private readonly storage = inject(TodosStorageService);
+  private readonly facade = inject(TodosFacadeService);
 
+  // Form setup (UI-specific, stays in component)
   readonly addTodoControl = new FormControl('', {
     nonNullable: true,
     validators: [trimmedRequiredValidator, Validators.maxLength(120)],
@@ -41,50 +39,19 @@ export class TodosPageComponent {
     nonNullable: true,
   });
 
-  readonly selectedFilter = signal<TodoFilter>('all');
-  readonly todos = signal<TodoItem[]>(this.storage.load());
-  readonly totalCount = computed(() => this.todos().length);
-  readonly activeCount = computed(() => this.todos().filter((todo) => !todo.completed).length);
-  readonly completedCount = computed(() => this.todos().filter((todo) => todo.completed).length);
+  readonly todos = this.facade.todos;
+  readonly totalCount = this.facade.totalCount;
+  readonly activeCount = this.facade.activeCount;
+  readonly completedCount = this.facade.completedCount;
+  readonly selectedFilter = this.facade.selectedFilter;
 
-  private readonly rawSearchValue = toSignal(
-    this.searchControl.valueChanges.pipe(startWith(this.searchControl.value)),
-    { initialValue: this.searchControl.value },
+  readonly searchDisplayValue = computed(() => this.searchControl.value.trim());
+
+  readonly visibleTodos = computed(() => this.facade.filterTodos(this.searchControl.value));
+
+  readonly resultsSummary = computed(() =>
+    this.facade.generateResultsSummary(this.searchControl.value),
   );
-
-  readonly searchQuery = computed(() => this.rawSearchValue().trim().toLowerCase());
-  readonly searchDisplayValue = computed(() => this.rawSearchValue().trim());
-
-  readonly visibleTodos = computed(() => {
-    const activeFilter = this.selectedFilter();
-    const query = this.searchQuery();
-
-    return this.todos().filter((todo) => {
-      const matchesFilter =
-        activeFilter === 'all'
-          ? true
-          : activeFilter === 'active'
-            ? !todo.completed
-            : todo.completed;
-
-      const matchesQuery = query.length === 0 || todo.title.toLowerCase().includes(query);
-
-      return matchesFilter && matchesQuery;
-    });
-  });
-
-  readonly resultsSummary = computed(() => {
-    const itemCount = this.visibleTodos().length;
-    const itemLabel = itemCount === 1 ? 'item' : 'items';
-    const viewLabel = FILTER_LABELS[this.selectedFilter()].toLowerCase();
-    const searchValue = this.searchDisplayValue();
-
-    if (searchValue.length > 0) {
-      return `${itemCount} ${itemLabel} in ${viewLabel} matching "${searchValue}"`;
-    }
-
-    return `${itemCount} ${itemLabel} in ${viewLabel}`;
-  });
 
   addTodo(): void {
     if (this.addTodoForm.invalid) {
@@ -92,44 +59,24 @@ export class TodosPageComponent {
       return;
     }
 
-    const title = this.addTodoControl.value.trim();
-    const nextTodo: TodoItem = {
-      id: crypto.randomUUID(),
-      title,
-      completed: false,
-      createdAt: new Date(),
-    };
-
-    const updatedTodos = [nextTodo, ...this.todos()];
-    this.todos.set(updatedTodos);
-    this.storage.persist(updatedTodos);
+    this.facade.addTodo(this.addTodoControl.value);
     this.addTodoForm.reset({ title: '' });
   }
 
   toggleTodo(todoId: string): void {
-    const updatedTodos = this.todos().map((todo) =>
-      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
-    );
-
-    this.todos.set(updatedTodos);
-    this.storage.persist(updatedTodos);
+    this.facade.toggleTodo(todoId);
   }
 
   deleteTodo(todoId: string): void {
-    const updatedTodos = this.todos().filter((todo) => todo.id !== todoId);
-
-    this.todos.set(updatedTodos);
-    this.storage.persist(updatedTodos);
+    this.facade.deleteTodo(todoId);
   }
 
   setFilter(filter: string | null): void {
-    if (filter === 'all' || filter === 'active' || filter === 'completed') {
-      this.selectedFilter.set(filter);
-    }
+    this.facade.setFilter(filter);
   }
 
   clearFilters(): void {
     this.searchControl.setValue('');
-    this.selectedFilter.set('all');
+    this.facade.setFilter('all');
   }
 }

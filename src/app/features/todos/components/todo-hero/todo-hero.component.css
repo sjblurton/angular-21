@@ -25,11 +25,10 @@
 }
 
 .brand-mark {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #f39b62 0%, var(--accent) 60%, #7d2f20 100%);
-  box-shadow: 0 0 0 0.45rem rgba(181, 75, 52, 0.15);
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  display: block;
 }
 
 .brand-copy {
