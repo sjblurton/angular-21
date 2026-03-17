@@ -1,4 +1,4 @@
-<main class="todo-page">
+<main [attr.data-testid]="testIds.root" class="todo-page">
   <app-todo-hero [total]="totalCount()" [active]="activeCount()" [completed]="completedCount()">
     <section class="workspace-card" aria-labelledby="workspace-heading">
       <div class="workspace-header">
@@ -19,10 +19,19 @@
       ></app-todo-filters-panel>
 
       <div class="results-bar">
-        <p class="results-copy" aria-live="polite">{{ resultsSummary() }}</p>
+        <p class="results-copy" aria-live="polite" [attr.data-testid]="testIds.resultsSummary">
+          {{ resultsSummary() }}
+        </p>
 
         @if (selectedFilter() !== 'all' || searchDisplayValue().length > 0) {
-          <button mat-stroked-button type="button" (click)="clearFilters()">Reset view</button>
+          <button
+            mat-stroked-button
+            type="button"
+            [attr.data-testid]="testIds.resetViewButton"
+            (click)="clearFilters()"
+          >
+            Reset view
+          </button>
         }
       </div>
 
