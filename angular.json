@@ -24,7 +24,9 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": [
+              "src/styles.css"
+            ]
           },
           "configurations": {
             "production": {
@@ -67,7 +69,10 @@
           "configurations": {
             "coverage": {
               "coverage": true,
-              "coverageReporters": ["text-summary", "html"],
+              "coverageReporters": [
+                "text-summary",
+                "html"
+              ],
               "coverageThresholds": {
                 "statements": 100,
                 "branches": 100,
@@ -75,6 +80,36 @@
                 "lines": 100
               }
             }
+          }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "angular-21:build",
+            "compodoc": true,
+            "compodocArgs": [
+              "-e",
+              "json",
+              "-d",
+              "."
+            ],
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "angular-21:build",
+            "compodoc": true,
+            "compodocArgs": [
+              "-e",
+              "json",
+              "-d",
+              "."
+            ],
+            "outputDir": "storybook-static"
           }
         }
       }
