@@ -1,0 +1,11 @@
+<section class="report-frame">
+  <h2 class="report-title">{{ title() }}</h2>
+  <p class="report-description">{{ description() }}</p>
+  <p class="report-link-wrapper">
+    <a class="report-link" [href]="src()" target="_blank" rel="noopener noreferrer">
+      Open this report in a new tab
+    </a>
+  </p>
+
+  <iframe class="report-iframe" [title]="title()" [src]="safeSrc()"></iframe>
+</section>
