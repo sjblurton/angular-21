@@ -5,6 +5,16 @@ const config: StorybookConfig = {
     "../src/**/*.mdx",
     "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
   ],
+  "staticDirs": [
+    {
+      "from": "../coverage/angular-21",
+      "to": "/reports/coverage"
+    },
+    {
+      "from": "../playwright-report",
+      "to": "/reports/playwright"
+    }
+  ],
   "addons": [
     "@storybook/addon-a11y",
     "@storybook/addon-docs",
