@@ -10,3 +10,5 @@ export const todoAddFormTestIds = {
   submitButton: submitButtonTestId,
   errorRequired: errorRequiredTestId,
 } as const;
+
+export type TodoAddFormTestIds = typeof todoAddFormTestIds;
