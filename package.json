@@ -9,10 +9,13 @@
     "test": "ng test",
     "test:coverage": "ng test --watch=false --configuration coverage",
     "coverage:open": "serve coverage/angular-21 --listen 4201 --no-port-switching",
+    "reports:refresh": "npm run test:coverage && npm run e2e",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "e2e:report": "playwright show-report",
+    "prestorybook": "npm run reports:refresh",
     "storybook": "ng run angular-21:storybook",
+    "prebuild-storybook": "npm run reports:refresh",
     "build-storybook": "ng run angular-21:build-storybook"
   },
   "packageManager": "npm@11.9.0",

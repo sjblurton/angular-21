@@ -109,6 +109,53 @@ npm run e2e:report
 
 > The e2e tests expect the app to be available at `http://localhost:4200`. If the dev server is not running, Playwright will fail with connection errors.
 
+## Running Storybook
+
+This project includes [Storybook](https://storybook.js.org/) for isolated UI development and documentation.
+
+Start Storybook locally:
+
+```bash
+npm run storybook
+```
+
+`npm run storybook` refreshes reports first by running:
+
+```bash
+npm run reports:refresh
+```
+
+This regenerates both coverage and Playwright HTML reports before launching Storybook.
+
+By default, Storybook is served at `http://localhost:6006`.
+
+Build a static Storybook site:
+
+```bash
+npm run build-storybook
+```
+
+`npm run build-storybook` also runs `npm run reports:refresh` first.
+
+Static output is written to:
+
+```text
+storybook-static/
+```
+
+### Storybook Reports section
+
+Storybook includes a **Reports** section with embedded HTML reports:
+
+- **Coverage** → `coverage/angular-21/index.html`
+- **Playwright** → `playwright-report/index.html`
+
+To regenerate both reports manually without launching/building Storybook:
+
+```bash
+npm run reports:refresh
+```
+
 ## Generated test IDs
 
 This project uses a shared test-id generator to avoid hardcoded `data-testid` strings.
