@@ -2,9 +2,6 @@ import { test, expect } from '@playwright/test';
 import { TodosPagePo } from './pages/todos-page.po';
 
 test.beforeEach(async ({ page }) => {
-  // Navigate first, then clear storage and reload so the app boots with an empty state.
-  // Using page.evaluate (not addInitScript) so only the *initial* load is cleaned -
-  // subsequent page.reload() calls within a test keep storage intact.
   await new TodosPagePo(page).goto();
 });
 

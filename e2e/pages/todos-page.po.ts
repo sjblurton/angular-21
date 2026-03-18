@@ -6,12 +6,17 @@ import { TodoSummaryPo } from '../components/todo-summary.po';
 import { TodoTaskListPo } from '../components/todo-task-list.po';
 
 export class TodosPagePo {
-  readonly addForm = new TodoAddFormPo(this.page);
-  readonly filtersPanel = new TodoFiltersPanelPo(this.page);
-  readonly taskList = new TodoTaskListPo(this.page);
-  readonly summary = new TodoSummaryPo(this.page);
+  readonly addForm: TodoAddFormPo;
+  readonly filtersPanel: TodoFiltersPanelPo;
+  readonly taskList: TodoTaskListPo;
+  readonly summary: TodoSummaryPo;
 
-  constructor(private readonly page: Page) {}
+  constructor(private readonly page: Page) {
+    this.addForm = new TodoAddFormPo(this.page);
+    this.filtersPanel = new TodoFiltersPanelPo(this.page);
+    this.taskList = new TodoTaskListPo(this.page);
+    this.summary = new TodoSummaryPo(this.page);
+  }
 
   async goto(): Promise<void> {
     await this.page.goto('/');
