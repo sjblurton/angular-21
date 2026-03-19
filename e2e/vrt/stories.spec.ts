@@ -57,7 +57,7 @@ test.describe('TodoAddForm Component Stories', () => {
 
           await page.waitForLoadState('domcontentloaded');
 
-          await page.waitForTimeout(1000);
+          await page.waitForSelector('#storybook-root > *', { state: 'visible' });
 
           // Take a full-page screenshot of the story
           await expect(page).toHaveScreenshot(
