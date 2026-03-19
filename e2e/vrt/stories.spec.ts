@@ -59,7 +59,6 @@ test.describe('TodoAddForm Component Stories', () => {
 
           await page.waitForSelector('#storybook-root > *', { state: 'visible' });
 
-          // Take a full-page screenshot of the story
           await expect(page).toHaveScreenshot(
             `todo-add-form-${story.storyName.toLowerCase()}-${viewport.name}.png`,
             {
