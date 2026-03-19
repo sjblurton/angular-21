@@ -58,12 +58,14 @@ jobs:
           path: baseline
           fetch-depth: 1
 
-      - name: Restore VRT baselines from base branch
+      - name: Prepare VRT baselines from base branch
         if: github.event_name == 'pull_request'
         run: |
-          rm -rf e2e/vrt/stories.spec.ts-snapshots
+          # Preserve PR branch snapshots in e2e/vrt/stories.spec.ts-snapshots.
+          # Copy base-branch snapshots into a separate directory for review/diff purposes.
+          mkdir -p vrt-baseline/e2e/vrt
           if [ -d baseline/e2e/vrt/stories.spec.ts-snapshots ]; then
-            cp -R baseline/e2e/vrt/stories.spec.ts-snapshots e2e/vrt/stories.spec.ts-snapshots
+            cp -R baseline/e2e/vrt/stories.spec.ts-snapshots vrt-baseline/e2e/vrt/stories.spec.ts-snapshots
           else
             echo "No baseline snapshots found on base branch."
           fi
