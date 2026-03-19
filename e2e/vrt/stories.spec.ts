@@ -57,7 +57,41 @@ test.describe('TodoAddForm Component Stories', () => {
 
           await page.waitForLoadState('domcontentloaded');
 
-          await page.waitForSelector('#storybook-root > *', { state: 'visible' });
+          const renderStateHandle = await page.waitForFunction(
+            () => {
+              const body = document.body;
+              if (!body) {
+                return null;
+              }
+
+              if (body.classList.contains('sb-show-main')) {
+                return 'ready';
+              }
+
+              if (body.classList.contains('sb-show-nopreview')) {
+                return 'no-preview';
+              }
+
+              if (body.classList.contains('sb-show-errordisplay')) {
+                const storybookError = document.querySelector('#error-message')?.textContent ?? '';
+                return storybookError.trim().length > 0
+                  ? `storybook-error:${storybookError.trim()}`
+                  : 'storybook-error';
+              }
+
+              if (body.children.length === 0 && body.textContent?.trim() === 'Not Found') {
+                return 'not-found';
+              }
+
+              return null;
+            },
+            { timeout: 12_000 },
+          );
+
+          const renderState = (await renderStateHandle.jsonValue()) as string;
+          if (renderState !== 'ready') {
+            throw new Error(`Story did not render for ${path}. Render state: ${renderState}`);
+          }
 
           await expect(page).toHaveScreenshot(
             `todo-add-form-${story.storyName.toLowerCase()}-${viewport.name}.png`,

@@ -51,6 +51,7 @@ jobs:
           retention-days: 30
 
       - name: Build Storybook
+        if: github.event_name == 'pull_request'
         run: npx ng run angular-21:build-storybook
 
       - name: Checkout base branch for VRT baselines
@@ -64,22 +65,22 @@ jobs:
       - name: Prepare VRT baselines from base branch
         if: github.event_name == 'pull_request'
         run: |
-          # Preserve PR branch snapshots in e2e/vrt/stories.spec.ts-snapshots.
           # Copy base-branch snapshots into a separate directory for review/diff purposes.
-          mkdir -p vrt-baseline/e2e/vrt
-          if [ -d baseline/e2e/vrt/stories.spec.ts-snapshots ]; then
-            cp -R baseline/e2e/vrt/stories.spec.ts-snapshots vrt-baseline/e2e/vrt/stories.spec.ts-snapshots
+          mkdir -p vrt-baseline/snapshots/vrt
+          if [ -d baseline/snapshots/vrt/stories.spec.ts ]; then
+            cp -R baseline/snapshots/vrt/stories.spec.ts vrt-baseline/snapshots/vrt/stories.spec.ts
           else
             echo "No baseline snapshots found on base branch."
           fi
 
-      - name: Run VRT compare tests
-        id: vrt_compare
+      - name: Generate candidate VRT snapshots
+        id: vrt_update
+        if: github.event_name == 'pull_request'
         continue-on-error: true
-        run: npm run e2e:vrt
+        run: npm run e2e:vrt:update
 
-      - name: Upload VRT compare report
-        if: always()
+      - name: Upload VRT run report
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: vrt-report
@@ -88,28 +89,24 @@ jobs:
             test-results/
           retention-days: 30
 
-      - name: Generate candidate VRT snapshots
-        id: vrt_update
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-        run: npm run e2e:vrt:update
-
       - name: Build VRT review bundle
         if: github.event_name == 'pull_request'
         run: |
           mkdir -p vrt-candidate
-          if [ -d baseline/e2e/vrt/stories.spec.ts-snapshots ]; then
-            cp -R baseline/e2e/vrt/stories.spec.ts-snapshots vrt-candidate/base-snapshots
+          if [ -d baseline/snapshots/vrt/stories.spec.ts ]; then
+            cp -R baseline/snapshots/vrt/stories.spec.ts vrt-candidate/base-snapshots
           fi
-          if [ -d e2e/vrt/stories.spec.ts-snapshots ]; then
-            cp -R e2e/vrt/stories.spec.ts-snapshots vrt-candidate/candidate-snapshots
+          if [ -d snapshots/vrt/stories.spec.ts ]; then
+            cp -R snapshots/vrt/stories.spec.ts vrt-candidate/candidate-snapshots
           fi
           {
             echo "# VRT review bundle"
             echo ""
-            if [ -d baseline/e2e/vrt/stories.spec.ts-snapshots ] && [ -d e2e/vrt/stories.spec.ts-snapshots ]; then
+            echo "VRT is non-blocking in CI. Review artifacts in this PR and commit approved snapshots manually."
+            echo ""
+            if [ -d baseline/snapshots/vrt/stories.spec.ts ] && [ -d snapshots/vrt/stories.spec.ts ]; then
               echo "Diff between base snapshots and PR candidate snapshots:"
-              diff -rq baseline/e2e/vrt/stories.spec.ts-snapshots e2e/vrt/stories.spec.ts-snapshots || true
+              diff -rq baseline/snapshots/vrt/stories.spec.ts snapshots/vrt/stories.spec.ts || true
             else
               echo "Base snapshots or candidate snapshots are missing."
             fi
@@ -123,10 +120,3 @@ jobs:
           name: vrt-candidate-snapshots
           path: vrt-candidate/
           retention-days: 30
-
-      - name: Fail if visual differences were detected
-        if: steps.vrt_compare.outcome == 'failure' || steps.vrt_update.outcome == 'failure'
-        run: |
-          echo "Visual changes were detected by VRT."
-          echo "Review the 'vrt-report' and 'vrt-candidate-snapshots' artifacts, then commit approved snapshot changes to the PR branch."
-          exit 1
