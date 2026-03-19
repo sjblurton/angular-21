@@ -20,7 +20,7 @@ export default defineConfig({
   },
   webServer: isVRTMode
     ? {
-        command: 'npx storybook build && npx serve storybook-static -l 6006',
+        command: 'test -d storybook-static || npx storybook build; npx serve storybook-static -l 6006',
         url: 'http://localhost:6006',
         reuseExistingServer: !process.env['CI'],
         timeout: 120_000,
