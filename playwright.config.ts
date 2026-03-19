@@ -16,6 +16,7 @@ export default defineConfig({
   use: {
     baseURL: isVRTMode ? 'http://localhost:6006' : 'http://localhost:4200',
     trace: 'on-first-retry',
+    snapshotPathTemplate: 'snapshots/{testFilePath}/{arg}{ext}',
   },
   webServer: isVRTMode
     ? {
