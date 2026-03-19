@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import { test, expect, devices } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 /**
  * Visual Regression Tests for Storybook Stories
