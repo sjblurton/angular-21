@@ -4,15 +4,19 @@ import angularEslintPlugin from '@angular-eslint/eslint-plugin';
 import angularEslintTemplatePlugin from '@angular-eslint/eslint-plugin-template';
 import angularEslintTemplateParser from '@angular-eslint/template-parser';
 
-
 export default [
   {
     ignores: ['node_modules', 'dist', 'coverage', '.angular', 'storybook-static'],
   },
   js.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.stylistic,
-  angularEslintPlugin.configs['recommended'],
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ['**/*.ts'],
+  })),
+  ...tseslint.configs.stylistic.map((config) => ({
+    ...config,
+    files: ['**/*.ts'],
+  })),
   {
     files: ['**/*.ts'],
     languageOptions: {
@@ -55,18 +59,15 @@ export default [
       },
     },
   },
-  angularEslintTemplatePlugin.configs['recommended'],
   {
     files: ['**/*.html'],
-    ...angularEslintTemplatePlugin.configs['recommended'],
-    ...angularEslintTemplatePlugin.configs['accessibility'],
     languageOptions: {
-      ...(angularEslintTemplatePlugin.configs['recommended']?.languageOptions ?? {}),
       parser: angularEslintTemplateParser,
     },
+    plugins: {
+      '@angular-eslint/template': angularEslintTemplatePlugin,
+    },
     rules: {
-      ...(angularEslintTemplatePlugin.configs['recommended']?.rules ?? {}),
-      ...(angularEslintTemplatePlugin.configs['accessibility']?.rules ?? {}),
       '@angular-eslint/template/use-track-by-function': 'warn',
     },
   },
