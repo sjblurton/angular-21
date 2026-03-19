@@ -7,10 +7,43 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 To start a local development server, run:
 
 ```bash
-ng serve
+npm run start
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Linting and type checking
+
+Run ESLint across the workspace:
+
+```bash
+npm run lint
+```
+
+Apply auto-fixable ESLint changes:
+
+```bash
+npm run lint:fix
+```
+
+Run TypeScript checks for the application and unit-test projects:
+
+```bash
+npm run type-check
+```
+
+Run the main local quality gate used before pushing changes:
+
+```bash
+npm run validate
+```
+
+Commits also run `lint-staged` through Husky. Any staged `*.ts` files are processed with:
+
+```bash
+eslint --fix
+prettier --write
+```
 
 ## Code scaffolding
 
@@ -70,12 +103,16 @@ Then open `http://localhost:4201` in your browser.
 
 ## Continuous integration
 
-GitHub Actions runs CI on every push and pull request using:
+GitHub Actions is split across three workflows:
 
-1. Build verification via `npm run build`
-2. Strict coverage verification via `npm run test:coverage`
+1. `.github/workflows/lint-and-typecheck.yml`
+   Runs `npm run lint` and `npm run type-check`.
+2. `.github/workflows/tests.yml`
+   Runs `npm run build`, `npm run test:coverage`, and `npm run e2e`.
+3. `.github/workflows/vrt.yml`
+   Builds Storybook, generates candidate visual-regression snapshots, and uploads review artifacts for pull requests.
 
-The workflow is defined in `.github/workflows/ci.yml`.
+The shared dependency bootstrap logic lives in `.github/actions/setup-ci/action.yml`.
 
 ## Running end-to-end tests
 
@@ -143,6 +180,10 @@ Static output is written to:
 storybook-static/
 ```
 
+Story files live under `src/**/*.stories.ts`.
+
+Todo component stories are grouped under the Storybook title prefix `Todos/Components`.
+
 ### Storybook Reports section
 
 Storybook includes a **Reports** section with embedded HTML reports:
@@ -155,6 +196,42 @@ To regenerate both reports manually without launching/building Storybook:
 ```bash
 npm run reports:refresh
 ```
+
+## Visual regression testing for Storybook
+
+Visual regression tests use Playwright against the static Storybook build.
+
+Run the current visual regression suite:
+
+```bash
+npm run e2e:vrt
+```
+
+Update approved snapshots after an intentional UI change:
+
+```bash
+npm run e2e:vrt:update
+```
+
+Open the Playwright UI in VRT mode:
+
+```bash
+npm run e2e:vrt:ui
+```
+
+Snapshot baselines are stored in:
+
+```text
+snapshots/vrt/stories.spec.ts/
+```
+
+The VRT runner automatically discovers Todo component stories from source files. A story is included automatically when:
+
+1. It lives in a `src/**/*.stories.ts` file.
+2. Its Storybook `title` starts with `Todos/Components`.
+3. It is exported using the `Story` alias pattern, for example `export const Default: Story = { ... }`.
+
+The Playwright VRT server also verifies that `storybook-static/index.html` and `storybook-static/iframe.html` exist before serving. If the static build is missing or incomplete, it rebuilds Storybook automatically.
 
 ## Generated test IDs
 
