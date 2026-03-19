@@ -1,0 +1,78 @@
+name: CI VRT
+
+on:
+  pull_request:
+
+jobs:
+  vrt-review:
+    runs-on: ubuntu-latest
+    env:
+      VRT_BASELINE_SNAPSHOT_DIR: baseline/snapshots/vrt/stories.spec.ts
+      VRT_CANDIDATE_SNAPSHOT_DIR: snapshots/vrt/stories.spec.ts
+      VRT_REVIEW_BUNDLE_DIR: vrt-candidate
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
+
+      - name: Build Storybook
+        run: npx ng run angular-21:build-storybook
+
+      - name: Checkout base branch for VRT baselines
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+          fetch-depth: 1
+
+      - name: Generate candidate VRT snapshots
+        continue-on-error: true
+        run: npm run e2e:vrt:update
+
+      - name: Upload VRT run report
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+      - name: Build VRT review bundle
+        run: |
+          mkdir -p "${VRT_REVIEW_BUNDLE_DIR}"
+
+          if [ -d "${VRT_BASELINE_SNAPSHOT_DIR}" ]; then
+            cp -R "${VRT_BASELINE_SNAPSHOT_DIR}" "${VRT_REVIEW_BUNDLE_DIR}/base-snapshots"
+          else
+            echo "No baseline snapshots found on base branch."
+          fi
+
+          if [ -d "${VRT_CANDIDATE_SNAPSHOT_DIR}" ]; then
+            cp -R "${VRT_CANDIDATE_SNAPSHOT_DIR}" "${VRT_REVIEW_BUNDLE_DIR}/candidate-snapshots"
+          fi
+
+          {
+            echo "# VRT review bundle"
+            echo ""
+            echo "VRT is non-blocking in CI. Review artifacts in this PR and commit approved snapshots manually."
+            echo ""
+            if [ -d "${VRT_BASELINE_SNAPSHOT_DIR}" ] && [ -d "${VRT_CANDIDATE_SNAPSHOT_DIR}" ]; then
+              echo "Diff between base snapshots and PR candidate snapshots:"
+              diff -rq "${VRT_BASELINE_SNAPSHOT_DIR}" "${VRT_CANDIDATE_SNAPSHOT_DIR}" || true
+            else
+              echo "Base snapshots or candidate snapshots are missing."
+            fi
+          } > "${VRT_REVIEW_BUNDLE_DIR}/README.txt"
+
+          cat "${VRT_REVIEW_BUNDLE_DIR}/README.txt" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload VRT review bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-candidate-snapshots
+          path: ${{ env.VRT_REVIEW_BUNDLE_DIR }}/
+          retention-days: 30
