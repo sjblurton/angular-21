@@ -16,15 +16,6 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: npm
 
-    # - name: Align npm version with packageManager
-    #   shell: bash
-    #   run: |
-    #     NPM_VERSION="$(node -p "require('./package.json').packageManager?.split('@')[1] || ''")"
-    #     if [ -n "$NPM_VERSION" ]; then
-    #       npm install --global "npm@$NPM_VERSION"
-    #     fi
-    #     npm --version
-
     - name: Install dependencies
       shell: bash
       run: npm ci
