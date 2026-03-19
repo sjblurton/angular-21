@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 import angularEslintPlugin from '@angular-eslint/eslint-plugin';
 import angularEslintTemplatePlugin from '@angular-eslint/eslint-plugin-template';
 import angularEslintTemplateParser from '@angular-eslint/template-parser';
-import globals from 'globals';
+
 
 export default [
   {
@@ -17,10 +17,6 @@ export default [
       parser: tseslint.parser,
       parserOptions: {
         projectService: true,
-      },
-      globals: {
-        ...globals.node,
-        ...globals.browser,
       },
     },
     plugins: {
