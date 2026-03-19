@@ -8,8 +8,8 @@ import { test, expect } from '@playwright/test';
  * These tests capture snapshots of component stories across multiple viewports
  * to detect unintended visual changes. Tests run against the static Storybook build.
  *
- * Run with: npx playwright test --project=storybook-vrt
- * Update snapshots: npx playwright test --project=storybook-vrt --update-snapshots
+ * Run with: npm run e2e:vrt
+ * Update snapshots: npm run e2e:vrt:update
  */
 
 const viewports = [
