@@ -598,7 +598,7 @@
         },
         {
             "name": "ReportFrameComponent",
-            "id": "component-ReportFrameComponent-e323810cea7fa8a83dc4423d7e4d93fbb78ad0dfd2b31f4f6f0327cd9c1b5582e77db10297dcea5fdc7718f4b7ae0a9c5bdfed47003df780b535753863652249",
+            "id": "component-ReportFrameComponent-e96f8cf5e81556af6935e5f14db2c7eb7d81c6dcd8253cb410c9793fda620e197a247e0b277c993a75ed0a65a9aa5e2d5f9e67ca08eb2509235d32d48a012ba0",
             "file": "src/stories/reports/report-frame.component.ts",
             "changeDetection": "ChangeDetectionStrategy.OnPush",
             "encapsulation": [],
@@ -607,7 +607,7 @@
             "inputs": [],
             "outputs": [],
             "providers": [],
-            "selector": "storybook-report-frame",
+            "selector": "app-report-frame",
             "styleUrls": [],
             "styles": [],
             "templateUrl": [
@@ -701,7 +701,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';\nimport { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';\n\n@Component({\n  selector: 'storybook-report-frame',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'report-frame-host',\n  },\n  templateUrl: './report-frame.component.html',\n  styleUrl: './report-frame.component.css',\n})\nexport class ReportFrameComponent {\n  readonly title = input.required<string>();\n  readonly description = input.required<string>();\n  readonly src = input.required<string>();\n\n  private readonly sanitizer = inject(DomSanitizer);\n\n  readonly safeSrc = computed<SafeResourceUrl>(() =>\n    this.sanitizer.bypassSecurityTrustResourceUrl(this.src()),\n  );\n}\n",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';\nimport { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';\n\n@Component({\n  selector: 'app-report-frame',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'report-frame-host',\n  },\n  templateUrl: './report-frame.component.html',\n  styleUrl: './report-frame.component.css',\n})\nexport class ReportFrameComponent {\n  readonly title = input.required<string>();\n  readonly description = input.required<string>();\n  readonly src = input.required<string>();\n\n  private readonly sanitizer = inject(DomSanitizer);\n\n  readonly safeSrc = computed<SafeResourceUrl>(() =>\n    this.sanitizer.bypassSecurityTrustResourceUrl(this.src()),\n  );\n}\n",
             "styleUrl": "./report-frame.component.css",
             "assetsDirs": [],
             "styleUrlsData": "",
@@ -2070,7 +2070,7 @@
                         "type": "ScopeName",
                         "deprecated": false,
                         "deprecationMessage": "",
-                        "destrucuredGroupId": "ae0490c6-480d-4136-958b-ff277c8b0711",
+                        "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
                         "destructuredParameter": true
                     }
                 ],
@@ -2080,7 +2080,7 @@
                         "type": "ScopeName",
                         "deprecated": false,
                         "deprecationMessage": "",
-                        "destrucuredGroupId": "ae0490c6-480d-4136-958b-ff277c8b0711",
+                        "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
                         "destructuredParameter": true,
                         "tagName": {
                             "text": "param"
@@ -2432,7 +2432,7 @@
                             "type": "ScopeName",
                             "deprecated": false,
                             "deprecationMessage": "",
-                            "destrucuredGroupId": "ae0490c6-480d-4136-958b-ff277c8b0711",
+                            "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
                             "destructuredParameter": true
                         }
                     ],
@@ -2442,7 +2442,7 @@
                             "type": "ScopeName",
                             "deprecated": false,
                             "deprecationMessage": "",
-                            "destrucuredGroupId": "ae0490c6-480d-4136-958b-ff277c8b0711",
+                            "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
                             "destructuredParameter": true,
                             "tagName": {
                                 "text": "param"
