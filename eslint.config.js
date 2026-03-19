@@ -10,9 +10,11 @@ export default [
     ignores: ['node_modules', 'dist', 'coverage', '.angular', 'storybook-static'],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.stylistic,
+  angularEslintPlugin.configs['recommended'],
   {
     files: ['**/*.ts'],
-    ...tseslint.configs.recommended[0],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -53,6 +55,7 @@ export default [
       },
     },
   },
+  angularEslintTemplatePlugin.configs['recommended'],
   {
     files: ['**/*.html'],
     languageOptions: {
