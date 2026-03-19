@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'storybook-report-frame',
+  selector: 'app-report-frame',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'report-frame-host',

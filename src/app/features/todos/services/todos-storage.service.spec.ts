@@ -74,7 +74,7 @@ describe('TodosStorageService', () => {
       const raw = localStorage.getItem(TODOS_STORAGE_KEY);
       expect(raw).not.toBeNull();
 
-      const stored = JSON.parse(raw ?? '[]') as Array<{ createdAt: string }>;
+      const stored = JSON.parse(raw ?? '[]') as { createdAt: string }[];
       expect(stored).toHaveLength(1);
       expect(stored[0]?.createdAt).toBe(validItem.createdAt.toISOString());
     });

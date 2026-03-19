@@ -8,10 +8,10 @@ type TodoTitleFormGroup = FormGroup<{
   title: FormControl<string>;
 }>;
 
-type TodoAddFormStoryProps = {
+interface TodoAddFormStoryProps {
   addTodoForm: TodoTitleFormGroup;
   titleControl: FormControl<string>;
-};
+}
 
 function createProps(titleValue = '', markTouched = false): TodoAddFormStoryProps {
   const titleControl = new FormControl(titleValue, {
