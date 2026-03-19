@@ -13,9 +13,9 @@
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "e2e:report": "playwright show-report",
-    "e2e:vrt": "VRT=1 playwright test",
-    "e2e:vrt:ui": "VRT=1 playwright test --ui",
-    "e2e:vrt:update": "VRT=1 playwright test --update-snapshots",
+    "e2e:vrt": "cross-env VRT=1 playwright test",
+    "e2e:vrt:ui": "cross-env VRT=1 playwright test --ui",
+    "e2e:vrt:update": "cross-env VRT=1 playwright test --update-snapshots",
     "prestorybook": "npm run reports:refresh",
     "storybook": "ng run angular-21:storybook",
     "prebuild-storybook": "npm run reports:refresh",
@@ -58,6 +58,7 @@
     "serve": "^14.2.6",
     "storybook": "^10.3.0",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "cross-env": "^7.0.3"
   }
 }
