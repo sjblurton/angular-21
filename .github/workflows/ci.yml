@@ -51,7 +51,7 @@ jobs:
           retention-days: 30
 
       - name: Build Storybook
-        run: ng run angular-21:build-storybook
+        run: npx ng run angular-21:build-storybook
 
       - name: Checkout base branch for VRT baselines
         if: github.event_name == 'pull_request'
