@@ -93,14 +93,11 @@ test.describe('TodoAddForm Component Stories', () => {
             throw new Error(`Story did not render for ${path}. Render state: ${renderState}`);
           }
 
-          await expect(page).toHaveScreenshot(
-            `todo-add-form-${story.storyName.toLowerCase()}-${viewport.name}.png`,
-            {
-              fullPage: false,
-              animations: 'disabled',
-              maxDiffPixels: 50,
-            },
-          );
+          await expect(page).toHaveScreenshot({
+            fullPage: false,
+            animations: 'disabled',
+            maxDiffPixels: 50,
+          });
         });
       }
     });

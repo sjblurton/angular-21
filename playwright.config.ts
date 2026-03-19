@@ -16,7 +16,7 @@ export default defineConfig({
   retries: isVRTMode ? 0 : isCI ? 2 : 0,
   workers: isVRTMode ? (isCI ? 2 : undefined) : isCI ? 1 : undefined,
   reporter: 'html',
-  snapshotPathTemplate: 'snapshots/{testFilePath}/{arg}{ext}',
+  snapshotPathTemplate: 'snapshots/{testFilePath}/{testName}{ext}',
   use: {
     baseURL: isVRTMode ? `http://${vrtHost}:${vrtPort}` : 'http://localhost:4200',
     trace: isVRTMode ? 'off' : 'on-first-retry',
