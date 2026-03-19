@@ -58,13 +58,15 @@ export default [
   angularEslintTemplatePlugin.configs['recommended'],
   {
     files: ['**/*.html'],
+    ...angularEslintTemplatePlugin.configs['recommended'],
+    ...angularEslintTemplatePlugin.configs['accessibility'],
     languageOptions: {
+      ...(angularEslintTemplatePlugin.configs['recommended']?.languageOptions ?? {}),
       parser: angularEslintTemplateParser,
     },
-    plugins: {
-      '@angular-eslint/template': angularEslintTemplatePlugin,
-    },
     rules: {
+      ...(angularEslintTemplatePlugin.configs['recommended']?.rules ?? {}),
+      ...(angularEslintTemplatePlugin.configs['accessibility']?.rules ?? {}),
       '@angular-eslint/template/use-track-by-function': 'warn',
     },
   },
