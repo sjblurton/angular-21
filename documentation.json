@@ -2021,20 +2021,20 @@
             {
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/features/todos/components/todo-filters-panel/todo-filters-panel.test-ids.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "generateTestIds({ scopeName: 'filtersPanel' }).add(\n  'searchInput',\n  'filterAll',\n  'filterActive',\n  'filterCompleted',\n)"
-            },
-            {
-                "ctype": "miscellaneous",
-                "subtype": "variable",
                 "file": "src/app/features/todos/components/todo-item/todo-item.test-ids.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "unknown",
                 "defaultValue": "generateTestIds({ scopeName: 'todoItem' }).add(\n  'checkbox',\n  'title',\n  'meta',\n  'stateButton',\n  'deleteButton',\n)"
+            },
+            {
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/features/todos/components/todo-filters-panel/todo-filters-panel.test-ids.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "generateTestIds({ scopeName: 'filtersPanel' }).add(\n  'searchInput',\n  'filterAll',\n  'filterActive',\n  'filterCompleted',\n)"
             },
             {
                 "ctype": "miscellaneous",
@@ -2070,7 +2070,7 @@
                         "type": "ScopeName",
                         "deprecated": false,
                         "deprecationMessage": "",
-                        "destrucuredGroupId": "6f99b98b-1af9-4d83-86ea-a754ad4ab1f8",
+                        "destrucuredGroupId": "bd9a575b-e889-4077-b1a4-5ce66e9cd666",
                         "destructuredParameter": true
                     }
                 ],
@@ -2080,7 +2080,7 @@
                         "type": "ScopeName",
                         "deprecated": false,
                         "deprecationMessage": "",
-                        "destrucuredGroupId": "6f99b98b-1af9-4d83-86ea-a754ad4ab1f8",
+                        "destrucuredGroupId": "bd9a575b-e889-4077-b1a4-5ce66e9cd666",
                         "destructuredParameter": true,
                         "tagName": {
                             "text": "param"
@@ -2432,7 +2432,7 @@
                             "type": "ScopeName",
                             "deprecated": false,
                             "deprecationMessage": "",
-                            "destrucuredGroupId": "6f99b98b-1af9-4d83-86ea-a754ad4ab1f8",
+                            "destrucuredGroupId": "bd9a575b-e889-4077-b1a4-5ce66e9cd666",
                             "destructuredParameter": true
                         }
                     ],
@@ -2442,7 +2442,7 @@
                             "type": "ScopeName",
                             "deprecated": false,
                             "deprecationMessage": "",
-                            "destrucuredGroupId": "6f99b98b-1af9-4d83-86ea-a754ad4ab1f8",
+                            "destrucuredGroupId": "bd9a575b-e889-4077-b1a4-5ce66e9cd666",
                             "destructuredParameter": true,
                             "tagName": {
                                 "text": "param"
