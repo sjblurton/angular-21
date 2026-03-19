@@ -2021,6 +2021,15 @@
             {
                 "ctype": "miscellaneous",
                 "subtype": "variable",
+                "file": "src/app/features/todos/components/todo-item/todo-item.test-ids.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "generateTestIds({ scopeName: 'todoItem' }).add(\n  'checkbox',\n  'title',\n  'meta',\n  'stateButton',\n  'deleteButton',\n)"
+            },
+            {
+                "ctype": "miscellaneous",
+                "subtype": "variable",
                 "file": "src/app/features/todos/components/todo-filters-panel/todo-filters-panel.test-ids.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -2035,15 +2044,6 @@
                 "deprecationMessage": "",
                 "type": "unknown",
                 "defaultValue": "generateTestIds({\n  scopeName: 'todoSummary',\n}).add('totalValue', 'activeValue', 'completedValue')"
-            },
-            {
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/app/features/todos/components/todo-item/todo-item.test-ids.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "generateTestIds({ scopeName: 'todoItem' }).add(\n  'checkbox',\n  'title',\n  'meta',\n  'stateButton',\n  'deleteButton',\n)"
             },
             {
                 "ctype": "miscellaneous",
@@ -2070,7 +2070,7 @@
                         "type": "ScopeName",
                         "deprecated": false,
                         "deprecationMessage": "",
-                        "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
+                        "destrucuredGroupId": "0f318d07-9ff8-44d7-96b3-4ce50d9b8c0c",
                         "destructuredParameter": true
                     }
                 ],
@@ -2080,7 +2080,7 @@
                         "type": "ScopeName",
                         "deprecated": false,
                         "deprecationMessage": "",
-                        "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
+                        "destrucuredGroupId": "0f318d07-9ff8-44d7-96b3-4ce50d9b8c0c",
                         "destructuredParameter": true,
                         "tagName": {
                             "text": "param"
@@ -2432,7 +2432,7 @@
                             "type": "ScopeName",
                             "deprecated": false,
                             "deprecationMessage": "",
-                            "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
+                            "destrucuredGroupId": "0f318d07-9ff8-44d7-96b3-4ce50d9b8c0c",
                             "destructuredParameter": true
                         }
                     ],
@@ -2442,7 +2442,7 @@
                             "type": "ScopeName",
                             "deprecated": false,
                             "deprecationMessage": "",
-                            "destrucuredGroupId": "5b42c4a1-6f02-4355-8d4b-4ac6576dd4ed",
+                            "destrucuredGroupId": "0f318d07-9ff8-44d7-96b3-4ce50d9b8c0c",
                             "destructuredParameter": true,
                             "tagName": {
                                 "text": "param"

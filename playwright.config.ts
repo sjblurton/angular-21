@@ -6,6 +6,8 @@ const isVRTMode = !!process.env['VRT'];
 const isCI = !!process.env['CI'];
 const vrtPort = 6106;
 const vrtHost = '127.0.0.1';
+const ensureStorybookStaticCommand =
+  '[ -f storybook-static/index.html ] && [ -f storybook-static/iframe.html ] || npx ng run angular-21:build-storybook';
 
 export default defineConfig({
   testDir: './e2e',
@@ -23,9 +25,7 @@ export default defineConfig({
   },
   webServer: isVRTMode
     ? {
-        command: isCI
-          ? `npx http-server storybook-static -a ${vrtHost} -p ${vrtPort} -c-1 -s`
-          : `test -d storybook-static || npx ng run angular-21:build-storybook; npx http-server storybook-static -a ${vrtHost} -p ${vrtPort} -c-1 -s`,
+        command: `${ensureStorybookStaticCommand}; npx http-server storybook-static -a ${vrtHost} -p ${vrtPort} -c-1 -s`,
         url: `http://${vrtHost}:${vrtPort}`,
         reuseExistingServer: false,
         timeout: 120_000,
