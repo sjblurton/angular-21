@@ -13,14 +13,15 @@ export default defineConfig({
   retries: process.env['CI'] ? 2 : 0,
   workers: process.env['CI'] ? 1 : undefined,
   reporter: 'html',
+  snapshotPathTemplate: 'snapshots/{testFilePath}/{arg}{ext}',
   use: {
     baseURL: isVRTMode ? 'http://localhost:6006' : 'http://localhost:4200',
     trace: 'on-first-retry',
-    snapshotPathTemplate: 'snapshots/{testFilePath}/{arg}{ext}',
   },
   webServer: isVRTMode
     ? {
-        command: 'test -d storybook-static || npx storybook build; npx serve storybook-static -l 6006',
+        command:
+          'test -d storybook-static || npx storybook build; npx serve storybook-static -l 6006',
         url: 'http://localhost:6006',
         reuseExistingServer: !process.env['CI'],
         timeout: 120_000,
