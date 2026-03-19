@@ -17,22 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Align npm version with packageManager
-        run: |
-          NPM_VERSION="$(node -p "require('./package.json').packageManager?.split('@')[1] || ''")"
-          if [ -n "$NPM_VERSION" ]; then
-            npm install --global "npm@$NPM_VERSION"
-          fi
-          npm --version
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Run ESLint
         run: npm run lint
